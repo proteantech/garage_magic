@@ -6,6 +6,7 @@
 # exit
 
 require 'chunky_png'
+require_relative 'bluish'
 
 class GarageMagic
   RED_THRESHOLD       = 100
@@ -28,7 +29,7 @@ class GarageMagic
         rgb = ChunkyPNG::Color.to_truecolor_bytes(image[x,y])
         if (rgb != [255, 255, 255]) # White
           colors << rgb
-          if bluish(rgb) # [0,128,255] # blue
+          if Bluish.new(rgb).bluish? # [0,128,255] # blue
             min_blue_y ||= [x,y]
             max_blue_y   = [x,y]
             blues << [x,y]
@@ -54,24 +55,6 @@ class GarageMagic
 
   end
 
-  # 100 is perfect blue, 80 min to pass
-  def bluish(rgb_array)
-    r = rgb_array[0]
-    g = rgb_array[1]
-    b = rgb_array[2]
-    # 175 is minimum because when r,b=0, anything less than b=175 looks purple or black
-    # green must be less than or equal to blue
-    blue_factor = b + g*0.3 - r*0.2
-    puts "blue_factor: #{blue_factor}"
-    (blue_factor > 175) && g <= b
-  end
-
-  def passes_threshold(rgb_array)
-    r = rgb_array[0]
-    g = rgb_array[1]
-    b = rgb_array[2]
-    r < RED_THRESHOLD && g < GREEN_THRESHOLD && b > BLUE_THRESHOLD
-  end
 end
 
 
