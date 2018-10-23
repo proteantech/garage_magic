@@ -28,4 +28,12 @@ class TestGarageMagic < Test::Unit::TestCase
     assert !good
   end
 
+  def test_overlap_top
+    puts "\ntest_overlap_top"
+    image = ChunkyPNG::Image.from_file('squares_and_line_overlap_top.png')
+    gm = GarageMagic.new(image)
+    good = gm.check_line
+    assert !good
+  end
+
 end
