@@ -1,0 +1,19 @@
+Saturation 80
+R: 2
+G: 37
+B: 116
+A very dark almost very slightly purple blue.
+
+Saturation 0
+R: 29
+G: 48
+B: 89
+A very dark blue.
+
+
+test_real_overhead_top_cut
+Image Height: 4032
+Image Width:  3024
+Max Blue: [2851, 2190]
+Min Blue: [189, 235]
+Blue Line Height: 1955

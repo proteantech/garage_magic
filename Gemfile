@@ -1,3 +1,4 @@
+gem 'oily_png'
 gem 'chunky_png'
 
 group :test do

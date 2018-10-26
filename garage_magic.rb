@@ -1,40 +1,50 @@
-# require 'RMagick'
-# include Magick
-#
-# cat = ImageList.new("squares_and_line.jpg")
-# cat.display
-# exit
-
-require 'chunky_png'
+require 'oily_png'
 require_relative 'bluish'
 
 class GarageMagic
-  RED_THRESHOLD       = 100
-  GREEN_THRESHOLD     = 201
-  GREEN_MIN_THRESHOLD = 120
-  BLUE_THRESHOLD      = 160
-  BLUE_LINE_THRESHOLD = 400
+  BLUE_LINE_THRESHOLD = 470
 
   def initialize(image)
     @image = image
   end
   def check_line
     image = @image
-    colors = Set.new
-    blues = []
+    puts "Image Height: #{image.height}"
+    puts "Image Width:  #{image.width}"
+
     min_blue_y = nil
     max_blue_y = nil
+    # quarter = image.width / 4
+    # half    = image.width / 2
+    # mask_start =  image.width / 5
+    # mask_count   =  image.width * 3 / 5
+    mask_start =  image.width / 10
+    mask_count   =  image.width * 8 / 10
+    puts "mask_start=#{mask_start}"
+    puts "mask_count=#{mask_count}"
     image.height.times do |y|
+      puts "y=#{y}" if y % 100 == 0
+      # mask_count.times do |count|
+      streak = 0
       image.width.times do |x|
+        # x = count + mask_start
         rgb = ChunkyPNG::Color.to_truecolor_bytes(image[x,y])
-        if (rgb != [255, 255, 255]) # White
-          colors << rgb
-          if Bluish.new(rgb).bluish? # [0,128,255] # blue
-            min_blue_y ||= [x,y]
-            max_blue_y   = [x,y]
-            blues << [x,y]
-          end
-          # puts "Non-White Pixel Detected @: (#{x}, #{y}) color #{rgb}"
+        bluish = Bluish.new(rgb)
+        # if x.between?(224,230) && y == 353
+        #   puts "(#{x},#{y}) #{rgb} #{bluish.bluish?} #{bluish.score} streak=#{streak}"
+        # end
+        if bluish.bluish?
+          # puts "blue pixel found at (#{x},#{y}) streak=#{streak}"
+          streak += 1
+        else
+          streak = 0
+        end
+        if streak > 5
+          puts "blue streak found at (#{x},#{y})"
+          # we've hit at least 5 blue pixels in a row, it's not just a random blue pixel but looks like part of the line
+          min_blue_y ||= [x,y]
+          max_blue_y   = [x,y]
+          break # move onto the next line.
         end
       end
     end
@@ -45,8 +55,6 @@ class GarageMagic
       blue_line_height = 0
     end
 
-    puts "Image Height: #{image.height}"
-    puts "Image Width:  #{image.width}"
     puts "Max Blue: #{max_blue_y}"
     puts "Min Blue: #{min_blue_y}"
     puts "Blue Line Height: #{blue_line_height}"

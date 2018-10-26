@@ -1,8 +1,6 @@
-require 'chunky_png'
-require 'test/unit'
 require_relative '../bluish'
-
 require 'spec_helper'
+
 RSpec.describe Bluish do
   it "test_full_blue" do
     puts "\ntest_full_blue"
@@ -58,5 +56,22 @@ RSpec.describe Bluish do
     puts "Score: #{bluish.score}"
     expect(bluish.bluish?).to eq false
   end
+  it "test very dark blue" do
+    # may need to make true if brightness/saturation is hard to do
+    puts "\ntest very dark blue"
+    rgb = [29,48,89]
+    bluish = Bluish.new(rgb)
+    puts "Score: #{bluish.score}"
+    expect(bluish.bluish?).to eq false
+  end
+  it "test very very dark blue" do
+    # may need to make true if brightness/saturation is hard to do
+    puts "\ntest very very dark blue"
+    rgb = [26, 47, 76]
+    bluish = Bluish.new(rgb)
+    puts "Score: #{bluish.score}"
+    expect(bluish.bluish?).to eq false
+  end
+
 end
 
